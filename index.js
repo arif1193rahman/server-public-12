@@ -26,7 +26,8 @@ async function run() {
   try {
     await client.connect();
     const database = client.db("secureProperty").collection("services");
-    // const bookingCollect = client.db("tourismWeb").collection("booking");
+    // const bookingCollect = client.db("secureProperty").collection("booking");
+    //  const exploreCollect = client.db("secureProperty").collection("explore");
 
     // console.log('connect to database');
 
@@ -40,7 +41,7 @@ async function run() {
 // Get single service
 app.get('/services/:id', async(req, res)=>{
   const id = req.params.id;
-  console.log('getting specifi service', id)
+  // console.log('getting specifi service', id)
   const query = {_id: ObjectId(id)};
   const services = await database.findOne(query);
   res.json(services);
@@ -55,6 +56,51 @@ app.get('/services/:id', async(req, res)=>{
     } )
 
 
+
+
+    // Explore
+    // app.get("/explore", async (req, res) => {
+    //   const cursor = database.find({});
+    //   const explore = await cursor.toArray();
+    //   res.send(explore);
+    // });
+    
+     // Get single service
+    // app.get('/explore/:id', async(req, res)=>{
+    //   const id = req.params.id;
+       // console.log('getting specifi service', id)
+    //   const query = {_id: ObjectId(id)};
+    //   const explore = await database.findOne(query);
+    //   res.json(explore);
+    // })
+    
+        // POST API explore
+    // app.post('/explore',async(req, res)=>{
+    //         const explore = req.body;
+    //         const result = await exploreCollect.insertOne(explore);
+            // console.log('hit the post API');
+    //         res.json(result)
+    //     } )
+
+
+app.get('/services', async(req, res)=>{
+  const cursor = database.find({});
+      const booking = await cursor.toArray();
+      res.send(booking);
+})
+
+    // confirm order
+    app.post('/services', async(req, res)=>{
+      const result = await database.insertOne(req.body);
+    res.json(result);
+    })
+
+
+    // My order
+    app.get('/myOrders/:email', async(req, res)=>{
+      const result = await database.find({email: req.params.email}).toArray();
+      res.json(result);
+    })
 
   } finally {
     // await clint.close();
