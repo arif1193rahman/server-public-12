@@ -27,11 +27,13 @@ async function run() {
     await client.connect();
     const database = client.db("secureProperty").collection("services");
     // const bookingCollect = client.db("secureProperty").collection("booking");
-    //  const exploreCollect = client.db("secureProperty").collection("explore");
+     const exploreCollect = client.db("secureProperty");
+     const exploreServiceConnection= exploreCollect.collection("explore");
+    // const usersConnection = database.collection('users'); 
 
     // console.log('connect to database');
 
- // Get API
+//  Get API
  app.get("/services", async (req, res) => {
   const cursor = database.find({});
   const services = await cursor.toArray();
@@ -50,13 +52,49 @@ app.get('/services/:id', async(req, res)=>{
     // POST API
     app.post('/services',async(req, res)=>{
         const service = req.body;
+        // console.log(service);
         const result = await database.insertOne(service);
         // console.log('hit the post API');
         res.json(result)
     } )
 
+// explore Collection
+
+app.get('/explore', async(req, res)=>{
+  const cursor = exploreServiceConnection.find({});
+  const services = await cursor.toArray();
+  res.send(services);
+})
+
+// app.post('/explore', async(req, res)=>{
+//   const explore = {
+//     "img": "https://i.ibb.co/jTXb9Sg/wireless-Camera1-400x250.jpg",
+//     "brand": "Wireless CCTV",
+//     "overview": "Zxtech 5MP Wireless CCTV System - 1x WiFi Security Camera Outdoor 2-Way-Audio Night Vision 9CH Sony Starvis | WF1A9Y",
+//     "range": "80 FIT",
+//      "price": 16000
+//   }
+//   const result = await exploreServiceConnection.insertOne(explore);
+//   console.log(result);
+// })
 
 
+
+// User Collection
+// app.post('/users', async(req, res)=>{
+//   const user = req.body;
+//   const result = await usersConnection.insertOne(user);
+//   console.log(result);
+//   res.json(result);
+// })
+
+app.put('/services/admin', async(req, res)=>{
+  const user = req.body;
+  const filter = {email: user.email};
+  const updateDoc = {$set: {role: 'admin'}}
+  const result = await database.updateDoc(filter, updateDoc);
+  res.json(result);
+})
 
     // Explore
     // app.get("/explore", async (req, res) => {
